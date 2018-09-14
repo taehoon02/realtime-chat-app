@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Realtime Chat Example with Socket.io</title>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h3>Realtime Chat Example with Socket.io</h3>
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="msgForm">Message: </label>
+        <input type="text" class="form-control" id="msgForm">
+      </div>
+      <button type="submit" class="btn btn-primary">Send</button>
+    </form>
+    <div id="chatLogs"></div>
+  </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    $(function() {
+      // connect socket.io
+      let socket = io();
+
+      // 서버로 자신의 정보 전송
+      socket.emit("login", {
+        name: makeRandomName(),
+        userid: "taevel02@gmail.com"
+      });
+
+      // 서버로부터의 정보 전송이 완료되면
+      socket.on("login", function(data) {
+        $("chatLogs").append("<div><strong>" + data + "</strong> has joined.</div>");
+      });
+
+      // 서버로부터 메세지가 수신되면
+      socket.on("chat", function(data) {
+        $("chatLogs").append("<div>" + data.msg + ": from <strong>" + data.from.name + "</strong></div>");
+      });
+
+      // Send 버튼이 클릭되면
+      $("form").submit(function(e) {
+        e.preventDefault();
+        let $msgForm = $("#msgForm");
+
+        // 서버로부터 메세지를 보낸다
+        socket.emit("chat", { msg: $msgForm.val() });
+        $msgForm.val('');
+      });
+
+      function makeRandomName() {
+        let name = '';
+        let possible = 'abcdefghijklmnopqrstuvwxyz';
+
+        for (let i = 0; i < 5; i++)
+          name += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return name;
+      }
+    });
+  </script>
+</body>
+</html>
