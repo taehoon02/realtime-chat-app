@@ -1,4 +1,7 @@
 # realtime-chat-app
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/taehoon02/realtime-chat-app.svg)](https://greenkeeper.io/)
+
 socket.io example
 
 ```bash
